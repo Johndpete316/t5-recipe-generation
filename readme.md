@@ -113,4 +113,14 @@ This will return a list of two recipes in the following format:
   {
     "title": "Recipe Title 2",
     "ingredients": ["Ingredient 1", "Ingredient 2"],
-    "directions": ["Step 1", "Step 2",
+    "directions": ["Step 1", "Step 2"]
+  }
+]
+```
+
+
+### Credits
+This project uses the T5 recipe generation model from the Hugging Face model hub: https://huggingface.co/flax-community/t5-recipe-generation
+
+Created by John Peterson
+
