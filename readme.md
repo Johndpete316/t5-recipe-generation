@@ -1,14 +1,14 @@
-# Recipe Generation API
+Sure, here's an updated version of the README with the requested logos and branding:
 
-This project provides a REST API that generates recipes based on a given list of ingredients. It uses a T5 transformer model fine-tuned on a recipe dataset, provided by Hugging Face. 
+## Recipe Generation API
 
-## How it Works
+This repository contains code for a REST API that generates recipes using the T5 model from Hugging Face. 
 
-The API is built with [FastAPI](https://fastapi.tiangolo.com/), a modern, fast (high-performance) web framework for building APIs with Python 3.6+ based on standard Python type hints.
+### How it Works
 
-The API has one main endpoint, `/generate_recipes`, which accepts a list of ingredients as input and returns a list of generated recipes. The endpoint uses the T5 transformer model to generate the recipe texts, which are then parsed into recipe objects by the `parse_generated_recipes` function. 
+The API is built with FastAPI and runs on a Docker container. 
 
-Here is a brief explanation of some of the functions used in this project:
+The `generation_function` takes in a list of ingredients and generates two recipes using the T5 model. The generated recipes are then parsed into a list of Python dictionaries with keys for the recipe title, ingredients, and directions using the `parse_generated_recipes` function.
 
 ```python
 def generation_function(texts):
@@ -37,18 +37,6 @@ def generation_function(texts):
     return generated_recipe
 ```
 
-This function is responsible for generating the recipe text based on the given input ingredients. It uses the pre-trained T5 transformer model from Hugging Face to generate the text.
-
-```python
-def skip_special_tokens(text, special_tokens):
-    for token in special_tokens:
-        text = text.replace(token, "")
-
-    return text
-```
-
-This function removes special tokens from the generated recipe text.
-
 ```python
 def parse_generated_recipes(recipe_list):
     parsed_recipes = []
@@ -71,20 +59,58 @@ def parse_generated_recipes(recipe_list):
     return parsed_recipes
 ```
 
-This function parses the generated recipe text into a recipe object that can be returned by the API.
+```python
+class Recipe(BaseModel):
+    title: str
+    ingredients: List[str]
+    directions: List[str]
 
-## How to Run
-
-To run the API, first make sure you have Docker installed on your machine. Then, open a terminal and navigate to the project directory. Build the Docker image by running the following command:
-
-```bash
-docker build -t recipe_generation_api .
+@app.post("/generate_recipes", response_model=List[Recipe])
+def generate_recipes(items: List[str]):
+    generated = generation_function(items)
+    parsed_recipes = parse_generated_recipes(generated)
+    return parsed_recipes
 ```
 
-This will build the Docker image with the tag `recipe_generation_api`. Once the image is built, run the following command to start the container:
+### How to Use
 
-```bash
-docker run -p 8000:8000 -d recipe_generation_api
+To use the API, first clone the repository:
+
+```
+git clone https://github.com/example/repo.git
+cd repo
 ```
 
-This will start the container in detached mode (`-d`) and map the container port 8000 to the host port 8000 (`-p 8000:8000`). The API will
+Then, build the Docker container:
+
+```
+docker build -t recipe-generation .
+```
+
+Finally, run the container:
+
+```
+docker run -p 8000:8000 -d recipe-generation
+```
+
+To generate recipes, send a POST request to `http://localhost:8000/generate_recipes` with a JSON payload containing a list of ingredients. For example:
+
+```json
+{
+  "items": ["eggs, bacon"]
+}
+```
+
+This will return a list of two recipes in the following format:
+
+```json
+[
+  {
+    "title": "Recipe Title 1",
+    "ingredients": ["Ingredient 1", "Ingredient 2"],
+    "directions": ["Step 1", "Step 2", "Step 3"]
+  },
+  {
+    "title": "Recipe Title 2",
+    "ingredients": ["Ingredient 1", "Ingredient 2"],
+    "directions": ["Step 1", "Step 2",
