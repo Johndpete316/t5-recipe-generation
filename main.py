@@ -17,7 +17,8 @@ generation_kwargs = {
     "no_repeat_ngram_size": 3,
     "do_sample": True,
     "top_k": 60,
-    "top_p": 0.95
+    "top_p": 0.95,
+    "num_return_sequences": 2
 }
 
 special_tokens = tokenizer.all_special_tokens
@@ -54,7 +55,7 @@ def generation_function(texts):
         max_length=256, 
         padding="max_length", 
         truncation=True, 
-        return_tensors="pt"
+        return_tensors="pt",
     )
 
     input_ids = inputs.input_ids
